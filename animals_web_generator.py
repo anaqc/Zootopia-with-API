@@ -13,9 +13,8 @@ def read_animals_html(file_path):
         return handle.read()
 
 
-def request_animal_api():
+def request_animal_api(name):
     """ This function requests from animals API by name animal"""
-    name = "Fox"
     api_url = 'https://api.api-ninjas.com/v1/animals?name={}'.format(name)
     response = requests.get(api_url,
                             headers={'X-Api-Key': 'c8xGjPKSJpvUykg8B8CqEQ==7zUhLI4e9004lnUd'})
@@ -58,7 +57,8 @@ def write_new_content(file_path, content):
 
 def main():
     new_file_path = "animals.html"
-    animal_data = request_animal_api()
+    name = input("Enter a name of an animal: ")
+    animal_data = request_animal_api(name)
     html_content = read_animals_html("animals_template.html")
     output = ""
     # Serialization of a single animal object to a different function.
