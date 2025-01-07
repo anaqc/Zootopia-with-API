@@ -1,28 +1,23 @@
-import requests
+import data_fetcher
 import json
 
 
 def load_data(file_path):
     """ Loads a JSON file """
-    with open(file_path, "r") as handle:
-        return json.load(handle)
+    try:
+        with open(file_path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except FileNotFoundError:
+        print(f"Error: File {file_path} not found")
+        raise
+    except json.JSONDecodeError:
+        print(f"Error: Invalid JSON in {file_path}")
+        raise
 
 def read_animals_html(file_path):
     """This function load the animals_template.html file"""
     with open(file_path, "r") as handle:
         return handle.read()
-
-
-def request_animal_api(name):
-    """ This function requests from animals API by name animal"""
-    api_url = 'https://api.api-ninjas.com/v1/animals?name={}'.format(name)
-    response = requests.get(api_url,
-                            headers={'X-Api-Key': 'c8xGjPKSJpvUykg8B8CqEQ==7zUhLI4e9004lnUd'})
-    if response.status_code == requests.codes.ok:
-        return response.json()
-
-    else:
-        print("Error:", response.status_code, response.text)
 
 
 def serialize_animal(animal_obj):
@@ -33,12 +28,12 @@ def serialize_animal(animal_obj):
     animal_color = animal_obj["characteristics"].get("color")
     # append information to each string
     output += "<li class='cards__item'>\n\t"
-    output += f"<div class='card__title'>{animal_obj['name']}</div>\n\t"
+    output += f"<div class='card__title'>{animal_obj.get('name')}</div>\n\t"
     output += "<p class='card__text'>\n\t\t"
     output += "<ul>\n\t\t\t"
-    output += (f"<li><strong>Scientific Name:</strong> {animal_obj['taxonomy']['scientific_name']}"
-               f"</li>\n\t\t\t")
-    output += f"<li><strong>Diet:</strong> {animal_obj['characteristics']['diet']}</li>\n\t\t\t"
+    output += (f"<li><strong>Scientific Name:</strong> "
+               f"{animal_obj['taxonomy'].get('scientific_name')}</li>\n\t\t\t")
+    output += f"<li><strong>Diet:</strong> {animal_obj['characteristics'].get('diet')}</li>\n\t\t\t"
     output += f"<li><strong>Location:</strong> {animal_obj["locations"][0]}</li>\n\t\t\t"
     if animal_color is not None:
         output += f"<li><strong>Color:</strong> {animal_color}</li>\n\t\t\t"
@@ -73,19 +68,18 @@ def animals_data_not_found(name):
 
 def main():
     new_file_path = "animals.html"
-    name = input("Enter a name of an animal: ")
-    animal_data = request_animal_api(name)
+    animal_name = input("Enter a name of an animal: ")
+    data = data_fetcher.fetch_data(animal_name)
     html_content = read_animals_html("animals_template.html")
     output = ""
-    if len(animal_data) == 0:
-        output += animals_data_not_found(name)
+    if len(data) == 0:
+        output += animals_data_not_found(animal_name)
         new_html_content = html_content.replace("__REPLACE_ANIMALS_INFO__", output)
     else:
         # Serialization of a single animal object to a different function.
-        for animal in animal_data:
+        for animal in data:
             output += serialize_animal(animal)
         new_html_content = html_content.replace("__REPLACE_ANIMALS_INFO__", output)
-
     write_new_content(new_file_path, new_html_content)
     print(f"Website was successfully generated to the file {new_file_path}")
 
