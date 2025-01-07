@@ -1,3 +1,4 @@
+import requests
 import json
 
 
@@ -10,6 +11,20 @@ def read_animals_html(file_path):
     """This function load the animals_template.html file"""
     with open(file_path, "r") as handle:
         return handle.read()
+
+
+def request_animal_api():
+    """ This function requests from animals API by name animal"""
+    name = "Fox"
+    api_url = 'https://api.api-ninjas.com/v1/animals?name={}'.format(name)
+    response = requests.get(api_url,
+                            headers={'X-Api-Key': 'c8xGjPKSJpvUykg8B8CqEQ==7zUhLI4e9004lnUd'})
+    if response.status_code == requests.codes.ok:
+        return response.json()
+
+    else:
+        print("Error:", response.status_code, response.text)
+
 
 def serialize_animal(animal_obj):
     """ This function handle a single animal serialization"""
@@ -40,15 +55,19 @@ def write_new_content(file_path, content):
     with open(file_path, "w") as f:
         f.write(content)
 
+
 def main():
-    animals_data = load_data("animals_data.json")
+    new_file_path = "animals.html"
+    animal_data = request_animal_api()
     html_content = read_animals_html("animals_template.html")
     output = ""
     # Serialization of a single animal object to a different function.
-    for animal in animals_data:
+    for animal in animal_data:
         output += serialize_animal(animal)
     new_html_content = html_content.replace("__REPLACE_ANIMALS_INFO__", output)
-    write_new_content("animals.html", new_html_content)
+
+    write_new_content(new_file_path, new_html_content)
+    print(f"Website was successfully generated to the file {new_file_path}")
 
 
 if __name__ == "__main__":
