@@ -1,5 +1,9 @@
 import requests
 
+#constants
+API_KEY = 'c8xGjPKSJpvUykg8B8CqEQ==7zUhLI4e9004lnUd'
+API_URL = 'https://api.api-ninjas.com/v1/animals?name={}'
+
 
 def fetch_data(animal_name):
   """
@@ -18,9 +22,8 @@ def fetch_data(animal_name):
     }
   },
   """
-  api_url = 'https://api.api-ninjas.com/v1/animals?name={}'.format(animal_name)
-  response = requests.get(api_url,
-                          headers={'X-Api-Key': 'c8xGjPKSJpvUykg8B8CqEQ==7zUhLI4e9004lnUd'})
+  url = API_URL.format(animal_name)
+  response = requests.get(url, headers={'X-Api-Key': API_KEY})
   if response.status_code == requests.codes.ok:
       return response.json()
 
