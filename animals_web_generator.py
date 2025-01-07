@@ -55,16 +55,36 @@ def write_new_content(file_path, content):
         f.write(content)
 
 
+def animals_data_not_found(name):
+    """ This function create a new site if the animal searched doesn't exist"""
+    output = ""
+    output += "<h2><strong>Error Message:</strong> Oops! Animal Not Found</h2>\n"
+    output += "<li class='cards__item'>\n\t"
+    output += f"<div class='card__title'> We couldn't find the animal you're looking for</div>\n\t"
+    output += "<p class='card__text'>\n\t\t"
+    output += "<ul>\n\t\t\t"
+    output += "<li>Double - check your spelling.</li>\n\t\t\t"
+    output += f"<li>Try searching for another animal.</li>\n\t\t\t"
+    output += "</ul>\n\t"
+    output += "</p>\n"
+    output += "</li>\n"
+    return output
+
+
 def main():
     new_file_path = "animals.html"
     name = input("Enter a name of an animal: ")
     animal_data = request_animal_api(name)
     html_content = read_animals_html("animals_template.html")
     output = ""
-    # Serialization of a single animal object to a different function.
-    for animal in animal_data:
-        output += serialize_animal(animal)
-    new_html_content = html_content.replace("__REPLACE_ANIMALS_INFO__", output)
+    if len(animal_data) == 0:
+        output += animals_data_not_found(name)
+        new_html_content = html_content.replace("__REPLACE_ANIMALS_INFO__", output)
+    else:
+        # Serialization of a single animal object to a different function.
+        for animal in animal_data:
+            output += serialize_animal(animal)
+        new_html_content = html_content.replace("__REPLACE_ANIMALS_INFO__", output)
 
     write_new_content(new_file_path, new_html_content)
     print(f"Website was successfully generated to the file {new_file_path}")
