@@ -12,4 +12,4 @@ You can show the result in `animals.html`.
 
 ## Contact
 
-For questions, contact open an issue on the repository.
+For questions, contact open an issue on the repository.py

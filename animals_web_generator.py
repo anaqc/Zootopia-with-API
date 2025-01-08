@@ -52,10 +52,19 @@ def animals_data_not_found(name):
     output += "</li>\n"
     return output
 
-
+def get_animal_name_from_user():
+    while True:
+        try:
+            animal_name = input("Enter a name of an animal: ")
+            if animal_name == "" or animal_name.isdigit():
+                print("You entered something that is not a animal name")
+                continue
+            return animal_name
+        except Exception as e:
+            print("You entered something that is not a animal name", e)
 def main():
     new_file_path = "animals.html"
-    animal_name = input("Enter a name of an animal: ")
+    animal_name = get_animal_name_from_user()
     data = data_fetcher.fetch_data(animal_name)
     html_content = read_animals_html("animals_template.html")
     output = ""
