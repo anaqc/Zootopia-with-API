@@ -10,6 +10,6 @@ To install this project, simply clone the repository and install the dependencie
 To use this project, run the following command - `python animals_web_generator.py`.
 You can show the result in `animals.html`.
 
-## Contributing
+## Contact
 
-We welcome contributions! If you'd like to contribute to this project, please follow these guidelines...
+For questions, contact open an issue on the repository.
